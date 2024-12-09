@@ -1,11 +1,52 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import landingimg from '../assets/landingimg.png'
 import ProjectCard from '../components/ProjectCard'
 import Card from 'react-bootstrap/Card';
+import { homeProjectAPI } from '../services/allAPI';
+
+
 
 
 const Home = () => {
+  const navigate=useNavigate()
+  const[homeProjects,setHomeProjects]=useState([])
+  const[isLogin,setIsLogin]=useState(false)
+  console.log(homeProjects);
+  
+  useEffect(()=>{
+    getHomeProjects()
+    if(sessionStorage.getItem("token")){
+      setIsLogin(true)
+    }else{
+      setIsLogin(false)
+    }
+  },[])
+
+  const getHomeProjects=async()=>{
+    try{
+      const result=await homeProjectAPI()
+      console.log(result);
+      if(result.status==200){
+        setHomeProjects(result.data)
+      }
+      
+    }catch(err){
+      console.log(err);
+      
+    }
+  }
+
+  const handleNavigateProject=()=>{
+    //user logined
+    if(sessionStorage.getItem("token")){
+      //logined user
+      navigate('/projects')
+    }else{
+      //Not logined user
+      alert("Please login to get full access to our project collection")
+    }
+  }
   return (
     <>
     <div style={{minHeight:'100vh'}} className='d-flex justify-content-center align-items-center rounded shadow w-100'>
@@ -15,8 +56,11 @@ const Home = () => {
             <h1 style={{fontSize:'80px'}}><i class="fa-brands fa-docker"></i>  Project Fair</h1>
             <p style={{textAlign:'justify'}}>One Stop Destination for all Software Development Projects. Where User can add and manage their projects. As well as access all projects available in our website... What are you waiting for!!!
             STARTS TO EXPLORE</p>
-            <Link to={'/login'} className='btn btn-warning'>STARTS TO EXPLORE</Link>
-          </div>
+           {
+           isLogin?
+           <Link to={'/dashboard'} className='btn btn-warning'>MANAGE YOUR PROJECT</Link>:
+           <Link to={'/login'} className='btn btn-warning'>STARTS TO EXPLORE</Link>
+           } </div>
           <div className='col-lg-6'>
             <img className='img-fluid' src={landingimg} alt="" />
           </div>
@@ -31,14 +75,17 @@ const Home = () => {
       <h1 className='mb-5'>Explore Our Projects</h1>
       <marquee>
         <div className='d-flex'>
-          <div className='mb-5'>
-            <ProjectCard/>
+    {
+          homeProjects?.map(project=>(
+            <div className='me-5'>
+            <ProjectCard displayData={project}/>
 
           </div>
-
-        </div>
+          ))
+         }
+       </div>
       </marquee>
-      <button className='btn btn-link mt-5'>CLICK HERE TO VIEW MORE PROJECTS</button>
+      <button onClick={handleNavigateProject} className='btn btn-link mt-5'>CLICK HERE TO VIEW MORE PROJECTS</button>
 
     </div>
 
