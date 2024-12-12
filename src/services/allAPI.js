@@ -26,3 +26,18 @@ export const allProjectAPI=async(reqHeader,searchKey)=>{
     //query parameter of url -search=${searchKey}&query stored in search
     return await commonAPI("GET",`${SERVER_BASE_URL}/all-project?search=${searchKey}`,{},reqHeader)
 }
+
+//project/67527c0e6de38deba4713826/edit
+export const updateProjectAPI=async(id,reqBody,reqHeader)=>{
+    return await commonAPI("PUT",`${SERVER_BASE_URL}/project/${id}/edit`,reqBody,reqHeader)
+}
+
+//delete project api
+export const deleteProjectAPI=async(id,reqHeader)=>{
+    return await commonAPI("DELETE",`${SERVER_BASE_URL}/project/${id}/remove`,{},reqHeader)
+}
+
+//update user api
+export const updateUserAPI=async(reqBody,reqHeader)=>{
+    return await commonAPI("PUT",`${SERVER_BASE_URL}/user/edit`,reqBody,reqHeader)
+}
